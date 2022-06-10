@@ -5,20 +5,24 @@ let playerone = document.getElementById("playerone");
 let playertwo = document.getElementById("playertwo");
 const movelength = 5;
 let moves = []
+let waittimeone = 0;
+let waittimetwo = 0;
+
+
+
 
 function moveforward(playerid, degrees) {
     playerstats = playerid.computedStyleMap();
     let leftm = Math.cos(degrees * Math.PI / 180) * movelength
-
     let topm = Math.sin(degrees * Math.PI / 180) * movelength;
     playerid.style.left = `${playerstats.get("left").value + leftm}px`
     playerid.style.top = `${playerstats.get("top").value + topm}px`
-
-
 }
 
-function shoot(playerid, degrees) {
-    playerstats = playerid.computedStyleMap();
+
+function shoot(playerid, degrees, waittime) {
+    if(waittime === 0)
+    {playerstats = playerid.computedStyleMap();
 
     let bullet = document.createElement("div")
     bullet.className = "bullet"
@@ -31,7 +35,9 @@ function shoot(playerid, degrees) {
 
     game.appendChild(bullettrajectory)
     bullettrajectory.appendChild(bullet)
+    }
 }
+
 
 
 window.onkeydown = function (event) {
@@ -56,6 +62,13 @@ window.onkeyup = function(e){
 
 
 let gameloop = window.setInterval(function () {
+    if(waittimeone > 0){
+        waittimeone--
+        console.log("waited")
+    }
+    if(waittimetwo > 0){
+        waittimetwo--
+    }
     if(moves.keys && moves.keys[68]){
         degreesone += 3
         document.getElementById("playerone").style.transform = `rotate(${degreesone}deg)`
@@ -78,19 +91,18 @@ let gameloop = window.setInterval(function () {
     if (moves.keys && moves.keys[38]) {
         moveforward(playertwo, degreestwo)
     }
-    if (moves.keys && moves.keys[32]) {
-        shoot(playerone, degreesone)
+    if (moves.keys && moves.keys[32] && waittimeone === 0) {
+        shoot(playerone, degreesone, waittimeone)
+        waittimeone = 10
     }
-    if (moves.keys && moves.keys[96]) {
-        shoot(playertwo, degreestwo)
+    if (moves.keys && moves.keys[96] && waittimetwo === 0) {
+        shoot(playertwo, degreestwo, waittimetwo)
+        waittimetwo = 10
     }
 
-    
     document.querySelectorAll(".bullet").forEach(bullet => {
-        
         let bulletleft = bullet.computedStyleMap().get("left").value;
         let tanktwodata = playertwo.getBoundingClientRect();
-
         bullet.style.left = `${bulletleft + 10}px`
         let rect = bullet.getBoundingClientRect();
 
