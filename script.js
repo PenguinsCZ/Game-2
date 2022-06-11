@@ -1,5 +1,8 @@
 let degreesone = 0;
 let degreestwo = 0;
+let heartsone = 5;
+let heartstwo = 5;
+
 let game = document.getElementById("game");
 let playerone = document.getElementById("playerone");
 let playertwo = document.getElementById("playertwo");
@@ -15,8 +18,31 @@ function moveforward(playerid, degrees) {
     playerstats = playerid.computedStyleMap();
     let leftm = Math.cos(degrees * Math.PI / 180) * movelength
     let topm = Math.sin(degrees * Math.PI / 180) * movelength;
-    playerid.style.left = `${playerstats.get("left").value + leftm}px`
-    playerid.style.top = `${playerstats.get("top").value + topm}px`
+    let leftdistance = playerstats.get("left").value
+    let topdistance = playerstats.get("top").value
+
+    if (leftdistance < 900 && leftdistance > 0) {  playerid.style.left = `${leftdistance + leftm}px` }
+    else{
+        if(leftdistance > 900 && leftm < 0){
+            playerid.style.left = `${leftdistance + leftm}px` 
+        }
+        if(leftdistance < 0  && leftm > 0){
+            playerid.style.left = `${leftdistance + leftm}px` 
+        }
+    }
+
+
+    if (topdistance < 900 && topdistance > 0) { playerid.style.top = `${topdistance + topm}px` }
+    else{
+        if(topdistance > 900 && topm < 0){
+            playerid.style.top = `${topdistance + topm}px` 
+        }
+        if(topdistance < 0  && topm > 0){
+            playerid.style.top = `${topdistance + topm}px` 
+        }
+    }
+
+    
 }
 
 
@@ -38,20 +64,24 @@ function shoot(playerid, degrees, waittime) {
     }
 }
 
-
-
-
+// function wallcollision(playerid){
+//     var playercoords = playerid.getBoundingClientRect();
+//     console.log(playercoords.left)
+//     if(playercoords.left > 900){
+//         return true
+//     }
+//     else{
+//         return false
+//     }
+// }
 window.onkeydown = function (event) {
     keycod = event.keyCode
     moves.keys = (moves.keys || []);
     moves.keys[keycod] = true;
 }
-
 window.onkeyup = function (e) {
     moves.keys[e.keyCode] = false;
 }
-
-
 
 
 let gameloop = window.setInterval(function () {
@@ -78,6 +108,7 @@ let gameloop = window.setInterval(function () {
         document.getElementById("playertwo").style.transform = `rotate(${degreestwo}deg)`
     }
     if (moves.keys && moves.keys[87]) {
+
         moveforward(playerone, degreesone)
     }
     if (moves.keys && moves.keys[38]) {
@@ -115,16 +146,19 @@ let gameloop = window.setInterval(function () {
             rect.left + 10 > tanktwodata.left &&
             rect.top < tanktwodata.top + 100 &&
             10 + rect.top > tanktwodata.top) {
-            console.log("collision tank two")
+            bullet.classList.remove("bulletone")
+            heartstwo--
         }
         //collision detection tank one
         if (bullet.classList.contains("bullettwo") && rect.left < tankonedata.left + 100 &&
             rect.left + 10 > tankonedata.left &&
             rect.top < tankonedata.top + 100 &&
             10 + rect.top > tankonedata.top) {
-            console.log("collision tank one")
+            
+            bullet.classList.remove("bullettwo")
+            heartsone--
+            console.log(`%c ${heartsone}`, "color: orange; font-size: 26px")
         }
-
     }
     )
 }
