@@ -21,40 +21,33 @@ function moveforward(playerid, degrees) {
 
 
 function shoot(playerid, degrees, waittime) {
-    if(waittime === 0)
-    {playerstats = playerid.computedStyleMap();
+    if (waittime === 0) {
+        playerstats = playerid.computedStyleMap();
 
-    let bullet = document.createElement("div")
-    bullet.className = "bullet"
-    let bullettrajectory = document.createElement("div")
-    bullettrajectory.className = "trajectory"
-    bullettrajectory.style.transform = `rotate(${degrees}deg)`
+        let bullet = document.createElement("div")
+        bullet.className = `bullet ${(playerid == playerone) ? "bulletone" : "bullettwo"}`
+        let bullettrajectory = document.createElement("div")
+        bullettrajectory.className = "trajectory"
+        bullettrajectory.style.transform = `rotate(${degrees}deg)`
 
-    bullettrajectory.style.top = `${playerstats.get("top").value + 45}px`
-    bullettrajectory.style.left = `${playerstats.get("left").value + 50}px`
+        bullettrajectory.style.top = `${playerstats.get("top").value + 45}px`
+        bullettrajectory.style.left = `${playerstats.get("left").value + 50}px`
 
-    game.appendChild(bullettrajectory)
-    bullettrajectory.appendChild(bullet)
+        game.appendChild(bullettrajectory)
+        bullettrajectory.appendChild(bullet)
     }
 }
+
 
 
 
 window.onkeydown = function (event) {
-
     keycod = event.keyCode
     moves.keys = (moves.keys || []);
     moves.keys[keycod] = true;
-
-    if (event.keyCode == 32) {
-        shoot(playerone, degreesone)
-    }
-    if (event.keyCode == 96) {
-        shoot(playertwo, degreestwo)
-    }
 }
 
-window.onkeyup = function(e){
+window.onkeyup = function (e) {
     moves.keys[e.keyCode] = false;
 }
 
@@ -62,30 +55,29 @@ window.onkeyup = function(e){
 
 
 let gameloop = window.setInterval(function () {
-    if(waittimeone > 0){
+    if (waittimeone > 0) {
         waittimeone--
-        console.log("waited")
     }
-    if(waittimetwo > 0){
+    if (waittimetwo > 0) {
         waittimetwo--
     }
-    if(moves.keys && moves.keys[68]){
+    if (moves.keys && moves.keys[68]) {
         degreesone += 3
         document.getElementById("playerone").style.transform = `rotate(${degreesone}deg)`
     }
-    if(moves.keys && moves.keys[65]){
+    if (moves.keys && moves.keys[65]) {
         degreesone -= 3
         document.getElementById("playerone").style.transform = `rotate(${degreesone}deg)`
     }
-    if(moves.keys && moves.keys[39]){
+    if (moves.keys && moves.keys[39]) {
         degreestwo += 3
         document.getElementById("playertwo").style.transform = `rotate(${degreestwo}deg)`
     }
-    if(moves.keys && moves.keys[37]){
-    degreestwo -=3
+    if (moves.keys && moves.keys[37]) {
+        degreestwo -= 3
         document.getElementById("playertwo").style.transform = `rotate(${degreestwo}deg)`
     }
-    if(moves.keys && moves.keys[87]){
+    if (moves.keys && moves.keys[87]) {
         moveforward(playerone, degreesone)
     }
     if (moves.keys && moves.keys[38]) {
@@ -101,7 +93,9 @@ let gameloop = window.setInterval(function () {
     }
 
     document.querySelectorAll(".bullet").forEach(bullet => {
+
         let bulletleft = bullet.computedStyleMap().get("left").value;
+        let tankonedata = playerone.getBoundingClientRect();
         let tanktwodata = playertwo.getBoundingClientRect();
         bullet.style.left = `${bulletleft + 10}px`
         let rect = bullet.getBoundingClientRect();
@@ -115,12 +109,22 @@ let gameloop = window.setInterval(function () {
             bullet.parentNode.remove()
             bullet.remove()
         }
-        if (rect.left < tanktwodata.left + 100 &&
+
+        //collision detection tank two
+        if (bullet.classList.contains("bulletone") && rect.left < tanktwodata.left + 100 &&
             rect.left + 10 > tanktwodata.left &&
             rect.top < tanktwodata.top + 100 &&
             10 + rect.top > tanktwodata.top) {
-            console.log("collision")
+            console.log("collision tank two")
         }
+        //collision detection tank one
+        if (bullet.classList.contains("bullettwo") && rect.left < tankonedata.left + 100 &&
+            rect.left + 10 > tankonedata.left &&
+            rect.top < tankonedata.top + 100 &&
+            10 + rect.top > tankonedata.top) {
+            console.log("collision tank one")
+        }
+
     }
     )
 }
