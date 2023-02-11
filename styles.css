@@ -1,3 +1,7 @@
+body{
+    display: flex;
+}
+
 .playerone{
     height: 100px;
     width: 100px;
@@ -27,7 +31,7 @@
     background-color: rgb(187, 77, 250);
     position: absolute;
     top: 20px;
-    left: 850px;
+    left: 750px;
 }
 .playertwo::before{
     height: 10px;
@@ -52,8 +56,8 @@
     top: 45px;
 }
 #game{
-    height: 1000px;
-    width: 1000px;
+    height: 900px;
+    width: 900px;
     background-color: greenyellow;
     position: relative;
     border: 5px solid;
@@ -77,4 +81,16 @@
     height: 10px;
     position: absolute;
     transform-origin: left;
+}
+.heartbox{
+    height: 100px;
+    width: 200px;
+    background-color: yellow;
+    border: black dotted;
+    margin: 10px;
+    
+}
+#hbox1, #hbox2{
+    font-size: x-large;
+    margin: 30px;
 }

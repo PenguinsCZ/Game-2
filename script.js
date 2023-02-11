@@ -6,11 +6,17 @@ let heartstwo = 5;
 let game = document.getElementById("game");
 let playerone = document.getElementById("playerone");
 let playertwo = document.getElementById("playertwo");
+const height = (window.innerHeight|| document.documentElement.clientHeight||document.body.clientHeight) - 200;
+console.log(height)
+document.getElementById("game").style.height = `${height + 100}px`
+document.getElementById("game").style.width = `${height + 100}px`
+const width = height
+playertwo.style.left = `${width - 50}px`
 const movelength = 5;
 let moves = []
 let waittimeone = 0;
 let waittimetwo = 0;
-
+let moveallowed = true
 
 
 
@@ -21,9 +27,9 @@ function moveforward(playerid, degrees) {
     let leftdistance = playerstats.get("left").value
     let topdistance = playerstats.get("top").value
 
-    if (leftdistance < 900 && leftdistance > 0) {  playerid.style.left = `${leftdistance + leftm}px` }
+    if (leftdistance < width && leftdistance > 0) {  playerid.style.left = `${leftdistance + leftm}px` }
     else{
-        if(leftdistance > 900 && leftm < 0){
+        if(leftdistance > width && leftm < 0){
             playerid.style.left = `${leftdistance + leftm}px` 
         }
         if(leftdistance < 0  && leftm > 0){
@@ -32,9 +38,9 @@ function moveforward(playerid, degrees) {
     }
 
 
-    if (topdistance < 900 && topdistance > 0) { playerid.style.top = `${topdistance + topm}px` }
+    if (topdistance < height && topdistance > 0) { playerid.style.top = `${topdistance + topm}px` }
     else{
-        if(topdistance > 900 && topm < 0){
+        if(topdistance > height && topm < 0){
             playerid.style.top = `${topdistance + topm}px` 
         }
         if(topdistance < 0  && topm > 0){
@@ -64,16 +70,6 @@ function shoot(playerid, degrees, waittime) {
     }
 }
 
-// function wallcollision(playerid){
-//     var playercoords = playerid.getBoundingClientRect();
-//     console.log(playercoords.left)
-//     if(playercoords.left > 900){
-//         return true
-//     }
-//     else{
-//         return false
-//     }
-// }
 window.onkeydown = function (event) {
     keycod = event.keyCode
     moves.keys = (moves.keys || []);
@@ -91,34 +87,34 @@ let gameloop = window.setInterval(function () {
     if (waittimetwo > 0) {
         waittimetwo--
     }
-    if (moves.keys && moves.keys[68]) {
+    if (moves.keys && moves.keys[68] && moveallowed) {
         degreesone += 3
         document.getElementById("playerone").style.transform = `rotate(${degreesone}deg)`
     }
-    if (moves.keys && moves.keys[65]) {
+    if (moves.keys && moves.keys[65] && moveallowed) {
         degreesone -= 3
         document.getElementById("playerone").style.transform = `rotate(${degreesone}deg)`
     }
-    if (moves.keys && moves.keys[39]) {
+    if (moves.keys && moves.keys[39] && moveallowed) {
         degreestwo += 3
         document.getElementById("playertwo").style.transform = `rotate(${degreestwo}deg)`
     }
-    if (moves.keys && moves.keys[37]) {
+    if (moves.keys && moves.keys[37] && moveallowed) {
         degreestwo -= 3
         document.getElementById("playertwo").style.transform = `rotate(${degreestwo}deg)`
     }
-    if (moves.keys && moves.keys[87]) {
+    if (moves.keys && moves.keys[87] && moveallowed) {
 
         moveforward(playerone, degreesone)
     }
-    if (moves.keys && moves.keys[38]) {
+    if (moves.keys && moves.keys[38] && moveallowed) {
         moveforward(playertwo, degreestwo)
     }
-    if (moves.keys && moves.keys[32] && waittimeone === 0) {
+    if (moves.keys && moves.keys[32] && waittimeone === 0 && moveallowed) {
         shoot(playerone, degreesone, waittimeone)
         waittimeone = 10
     }
-    if (moves.keys && moves.keys[96] && waittimetwo === 0) {
+    if (moves.keys && moves.keys[96] && waittimetwo === 0 && moveallowed) {
         shoot(playertwo, degreestwo, waittimetwo)
         waittimetwo = 10
     }
@@ -148,6 +144,14 @@ let gameloop = window.setInterval(function () {
             10 + rect.top > tanktwodata.top) {
             bullet.classList.remove("bulletone")
             heartstwo--
+            
+            if (heartstwo === 0){
+                document.getElementById("hbox2").innerHTML = `P2 is dead!`
+                moveallowed = false
+            }
+            else{
+                document.getElementById("hbox2").innerHTML = `P2 hearts: ${heartstwo}`
+            }
         }
         //collision detection tank one
         if (bullet.classList.contains("bullettwo") && rect.left < tankonedata.left + 100 &&
@@ -157,6 +161,7 @@ let gameloop = window.setInterval(function () {
             
             bullet.classList.remove("bullettwo")
             heartsone--
+            document.getElementById("hbox1").innerHTML = `P1 hearts: ${heartsone}`
             console.log(`%c ${heartsone}`, "color: orange; font-size: 26px")
         }
     }
